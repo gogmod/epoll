@@ -1,12 +1,12 @@
 package epoll
 
 import (
+	"log"
 	"net"
 	"reflect"
 	"sync"
 	"syscall"
 
-	"github.com/sirupsen/logrus"
 	"golang.org/x/sys/unix"
 )
 
@@ -44,7 +44,7 @@ func (e *Epoll) Add(conn net.Conn) (err error) {
 	defer e.lock.Unlock()
 	e.connections[fd] = conn
 	if len(e.connections)%100 == 0 {
-		logrus.Infof("Total number of connections: %v", len(e.connections))
+		log.Printf("Total number of connections: %v", len(e.connections))
 	}
 	return nil
 }
@@ -59,7 +59,7 @@ func (e *Epoll) Remove(conn net.Conn) (err error) {
 	defer e.lock.Unlock()
 	delete(e.connections, fd)
 	if len(e.connections)%100 == 0 {
-		logrus.Infof("Total number of connections: %v", len(e.connections))
+		log.Printf("Total number of connections: %v", len(e.connections))
 	}
 	return nil
 }
