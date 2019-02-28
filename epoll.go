@@ -10,9 +10,17 @@ import (
 	"golang.org/x/sys/unix"
 )
 
-func SetLimit(cur, max uint64) (err error) {
-	err = syscall.Setrlimit(syscall.RLIMIT_NOFILE, &syscall.Rlimit{Cur: cur, Max: max})
-	return
+func SetLimit() (err error) {
+	var rLimit syscall.Rlimit
+	if err = syscall.Getrlimit(syscall.RLIMIT_NOFILE, &rLimit); err != nil {
+		return err
+	}
+	rLimit.Cur = rLimit.Max
+	if err = syscall.Setrlimit(syscall.RLIMIT_NOFILE, &rLimit); err != nil {
+		return err
+	}
+	log.Printf("set cur limit: %d", rLimit.Cur)
+	return nil
 }
 
 type Epoll struct {

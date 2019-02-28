@@ -13,7 +13,9 @@ var epoller *epoll.Epoll
 
 //docker run -v $(pwd)/server:/go/server --name tcp_server -d golang /go/server
 func main() {
-	epoll.SetLimit(100000, 100000)
+	if err := epoll.SetLimit(); err != nil {
+		panic(err)
+	}
 	ln, err := net.Listen("tcp", ":8972")
 	if err != nil {
 		panic(err)
